@@ -27,10 +27,10 @@ class QLearner(object):
         self.epsilon_max = 1.0
         self.epsilon_min = 0.05
         self.epsilon_decay = LinearDecaySchedule(initial_value = self.epsilon_max,
-                                                 final_value = self.epsilon_min, 
+                                                 final_value = self.epsilon_min,
         self.step_num = 0
         self.policy = self.epsilon_greedy_Q
-        
+
         self.memory = ExperienceMemory(capacity = int(1e5))
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")                                         max_steps = 0.5 * MAX_NUM_EPISODES * STEPS_PER_EPISODE)
 
@@ -39,14 +39,14 @@ class QLearner(object):
 
     def get_action(self, obs):
         discrete_obs = self.discretize(obs)
-        # Selección de la acción en base a Epsilon-Greedy
+        # Selection of acction base in gridi
         if self.epsilon > EPSILON_MIN:
             self.epsilon -= EPSILON_DECAY
-        if np.random.random() > self.epsilon: #Con probabilidad 1-epsilon, elegimos la mejor posible
+        if np.random.random() > self.epsilon: # Pprobabily epsilon 1 it chose action
             return np.argmax(self.Q(discrete_obs.data.to(torch.device('cpu'))).numpy)
 
         else:
-            return np.random.choice([a for a in range(self.action_shape)])#Con probabilidad epsilon, elegimos una al azar
+            return np.random.choice([a for a in range(self.action_shape)])# Choose one random
 
 
     def learn(self, obs, action, reward, next_obs):

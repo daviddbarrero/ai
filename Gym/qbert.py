@@ -15,6 +15,6 @@ for episode in range(maxNum):
         obs = next_state
 
         if done is True:
-            print("\n Episodio #{} terminado en {} steps".format(episode, step+1))
+            print("\n Episode #{} finished in :  {} steps".format(episode, step+1))
             break
 env.close()
