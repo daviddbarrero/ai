@@ -35,7 +35,6 @@ env.close()
 # ALPHA : LEARNING RATIO
 # GAMMA : DISCOUNT FOR THE AGENT IN EACH STEP
 
-# NUM_DISCRETE_BINS: número de divisiones en el caso de discretizar el espacio de estados continuo.
 import numpy as np
 
 MAX_NUM_EPISODES = 50000
@@ -57,7 +56,7 @@ class QLearner(object):
         self.obs_width  = ( self.obs_high- self.obs_low)/ self.obs_bins
 
         self.action_shape = env.action_space.n
-        self.Q = np.zeros((self.obs_bins+1, self.obs_bins+1, self.action_shape)) # matriz of 31x31x3
+        self.Q = np.zeros((self.obs_bins+1, self.obs_bins+1, self.action_shape)) # matrix of 31x31x3
 
         self.alpha = ALPHA
         self.gamma = GAMMA
@@ -68,13 +67,13 @@ class QLearner(object):
 
     def get_action(self, obs):
         discrete_obs = self.discretize(obs)
-        # Selección de la acción en base a Epsilon-Greedy
+        # Selection of action base on the epsion
         if self.epsilon > EPSILON_MIN:
             self.epsilon -= EPSILON_DECAY
-        if np.random.random() > self.epsilon: #Con probabilidad 1-epsilon, elegimos la mejor posible
+        if np.random.random() > self.epsilon: 
             return np.argmax(self.Q[discrete_obs])
         else:
-            return np.random.choice([a for a in range(self.action_shape)])#Con probabilidad epsilon, elegimos una al azar
+            return np.random.choice([a for a in range(self.action_shape)])# With epsilon prob we choose one
 
 
     def learn(self, obs, action, reward, next_obs):
