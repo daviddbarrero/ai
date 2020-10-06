@@ -2,12 +2,12 @@ import gym
 import numpy as np
 
 
-# EPISILON_MIN : vamos aprendiendo, mientras el incremento de aprendizaje sea superior a dicho valor
-# MAX_NUM_EPISONES : número máximo de iteraciones que estamos dispuestos a realizar
-# STEPS_PER_EPISODE: número máximo de pasos a realizar en cada episodio
-# ALPHA: ratio de aprendizaje del agente
-# GAMMA: factor de descuento del agente
-# NUM_DISCRETE_BINS: número de divisiones en el caso de discretizar el espacio de estados continuo.
+# EPISILON_MIN : Learning while that value is less than epsilon
+# MAX_NUM_EPISONES : Max iterations
+# STEPS_PER_EPISODE: Steps per episode
+# ALPHA: Learning ratio
+# GAMMA:  Discount ratio
+# NUM_DISCRETE_BINS
 
 MAX_NUM_EPISODES = 50000
 STEPS_PER_EPISODE = 200
@@ -44,13 +44,13 @@ class QLearner(object):
 
     def get_action(self, obs):
         discrete_obs = self.discretize(obs)
-        # Selección de la acción en base a Epsilon-Greedy
+      
         if self.epsilon > EPSILON_MIN:
             self.epsilon -= EPSILON_DECAY
-        if np.random.random() > self.epsilon: #Con probabilidad 1-epsilon, elegimos la mejor posible
+        if np.random.random() > self.epsilon: # Choose best action base in Greedy
             return np.argmax(self.Q[discrete_obs])
         else:
-            return np.random.choice([a for a in range(self.action_shape)])#Con probabilidad epsilon, elegimos una al azar
+            return np.random.choice([a for a in range(self.action_shape)])#Choose a choice random
 
 
     def learn(self, obs, action, reward, next_obs):
@@ -59,7 +59,7 @@ class QLearner(object):
         self.Q[discrete_obs][action] += self.alpha*(reward + self.gamma * np.max(self.Q[discrete_next_obs]) - self.Q[discrete_obs][action])
 
 
-## Método para entrenar a nuestro agente
+## Training function for agent
 def train(agent, environment):
     best_reward = -float('inf')
     for episode in range(MAX_NUM_EPISODES):
@@ -67,16 +67,16 @@ def train(agent, environment):
         obs = environment.reset()
         total_reward = 0.0
         while not done:
-            action = agent.get_action(obs)# Acción elegida según la ecuación de Q-LEarning
+            action = agent.get_action(obs)# Choose by Q-Learning ecuation
             next_obs, reward, done, info = environment.step(action)
             agent.learn(obs, action, reward, next_obs)
             obs = next_obs
             total_reward += reward
         if total_reward > best_reward:
             best_reward = total_reward
-        print("EPisodio número {} con recompensa: {}, mejor recompensa: {}, epsilon: {}".format(episode, total_reward, best_reward, agent.epsilon))
+        print("Episode num {} Reward: {}, Best reward: {}, epsilon: {}".format(episode, total_reward, best_reward, agent.epsilon))
 
-    ## De todas las políticas de entrenamiento que hemos obtenido devolvemos la mejor de todas
+    ## We take the best learning policy
     return np.argmax(agent.Q, axis = 2)
 
 
@@ -85,7 +85,7 @@ def test(agent, environment, policy):
     obs = environment.reset()
     total_reward = 0.0
     while not done:
-        action = policy[agent.discretize(obs)] #acción que dictamina la política que hemos entrenado
+        action = policy[agent.discretize(obs)] # Action determine by policy
         next_obs, reward, done, info = environment.step(action)
         obs = next_obs
         total_reward += reward
